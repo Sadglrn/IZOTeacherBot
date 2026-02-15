@@ -34,8 +34,29 @@ SHELVE_FILES = [
 ]
 
 
+def resolve_sslmode(database_url: str) -> str:
+    ssl_mode = os.environ.get("DB_SSLMODE")
+    if ssl_mode:
+        return ssl_mode
+    if "localhost" in database_url or "127.0.0.1" in database_url:
+        return "disable"
+    return "require"
+
+
 def reset_database(database_url: str) -> None:
-    connection = psycopg2.connect(database_url, sslmode="require")
+    ssl_mode = resolve_sslmode(database_url)
+    try:
+        connection = psycopg2.connect(database_url, sslmode=ssl_mode)
+    except psycopg2.OperationalError as error:
+        raise SystemExit(
+            "Cannot connect to PostgreSQL.\n"
+            "Check that PostgreSQL service is running and DATABASE_URL is correct.\n"
+            "PowerShell quick check:\n"
+            "  Test-NetConnection localhost -Port 5432\n"
+            "If local Postgres uses no SSL, keep DB_SSLMODE unset (auto=disable for localhost)\n"
+            f"Original error: {error}"
+        )
+
     try:
         with connection:
             with connection.cursor() as cursor:

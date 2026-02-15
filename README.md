@@ -59,6 +59,7 @@ CREATE TABLE IF NOT EXISTS pic_infos (
 python main.py
 ```
 
+
 ## Reset local picture database (delete old and create new)
 
 If you want a completely fresh local DB for images:
@@ -78,3 +79,30 @@ If you want to keep local shelve state files:
 ```powershell
 python reset_local_db.py --keep-state
 ```
+
+### Troubleshooting: "connection refused" on localhost:5432
+If `python reset_local_db.py` shows `connection refused`, PostgreSQL service is not running or listens on another port.
+
+PowerShell checks:
+
+```powershell
+Test-NetConnection localhost -Port 5432
+Get-Service *postgres*
+```
+
+Start service (service name may differ):
+
+```powershell
+Start-Service postgresql-x64-16
+```
+
+If your PostgreSQL uses another port, update `DATABASE_URL` accordingly.
+
+Optional SSL mode override:
+
+```powershell
+$env:DB_SSLMODE = "disable"   # for most local installs
+# or
+$env:DB_SSLMODE = "require"   # for managed/remote DB with SSL
+```
+
