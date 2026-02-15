@@ -58,3 +58,23 @@ CREATE TABLE IF NOT EXISTS pic_infos (
 ```powershell
 python main.py
 ```
+
+## Reset local picture database (delete old and create new)
+
+If you want a completely fresh local DB for images:
+
+```powershell
+$env:DATABASE_URL = "postgresql://postgres:YOUR_PASSWORD@localhost:5432/izoteacherbot"
+python reset_local_db.py
+```
+
+What this does:
+- drops old table `pic_infos`
+- creates a new empty table `pic_infos`
+- removes local shelve game-state files (`shelve.db.*`)
+
+If you want to keep local shelve state files:
+
+```powershell
+python reset_local_db.py --keep-state
+```
