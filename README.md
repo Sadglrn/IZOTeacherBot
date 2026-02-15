@@ -59,7 +59,6 @@ CREATE TABLE IF NOT EXISTS pic_infos (
 python main.py
 ```
 
-
 ## Reset local picture database (delete old and create new)
 
 If you want a completely fresh local DB for images:
