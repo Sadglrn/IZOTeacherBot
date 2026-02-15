@@ -6,7 +6,13 @@ class DBHelper:
 	def __init__(self):
 		""" Устанавливаем соединение с БД """
 		DATABASE_URL = os.environ['DATABASE_URL']
-		self.connect = psycopg2.connect(DATABASE_URL, sslmode='require')
+		ssl_mode = os.environ.get('DB_SSLMODE')
+		if not ssl_mode:
+			if 'localhost' in DATABASE_URL or '127.0.0.1' in DATABASE_URL:
+				ssl_mode = 'disable'
+			else:
+				ssl_mode = 'require'
+		self.connect = psycopg2.connect(DATABASE_URL, sslmode=ssl_mode)
 		print("Database opened successfully")
 		self.cursor = self.connect.cursor()
 
